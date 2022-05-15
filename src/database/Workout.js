@@ -2,6 +2,7 @@ const DB = require("./db.json");
 const { saveToDatabase } = require("./utils");
 
 /**
+ *
  * @openapi
  * components:
  *   schemas:
@@ -10,13 +11,13 @@ const { saveToDatabase } = require("./utils");
  *       properties:
  *         id:
  *           type: string
- *           example: 61dbae02-c147-4e28-863c-db7bd402b2d6
+ *           example: 50
  *         name:
  *           type: string
- *           example: Tommy V
+ *           example: Hari lal
  *         mode:
  *           type: string
- *           example: For Time
+ *           example: For time
  *         equipment:
  *           type: array
  *           items:
@@ -61,7 +62,7 @@ const getOneWorkout = (workoutId) => {
     const workout = DB.workouts.find((workout) => workout.id === workoutId);
     if (!workout) {
       throw {
-        status: 400,
+        status: 404,
         message: `Can't find workout with the id '${workoutId}'`,
       };
     }
@@ -91,20 +92,20 @@ const createNewWorkout = (newWorkout) => {
 
 const updateOneWorkout = (workoutId, changes) => {
   try {
-    const isAlreadyAdded =
-      DB.workouts.findIndex((workout) => workout.name === changes.name) > -1;
-    if (isAlreadyAdded) {
-      throw {
-        status: 400,
-        message: `Workout with the name '${changes.name}' already exists`,
-      };
-    }
+    // const isAlreadyAdded =
+    //   DB.workouts.findIndex((workout) => workout.name === changes.name) > -1;
+    // if (isAlreadyAdded) {
+    //   throw {
+    //     status: 400,
+    //     message: `Workout with the name '${changes.name}' already exists`,
+    //   };
+    // }
     const indexForUpdate = DB.workouts.findIndex(
       (workout) => workout.id === workoutId
     );
     if (indexForUpdate === -1) {
       throw {
-        status: 400,
+        status: 404,
         message: `Can't find workout with the id '${workoutId}'`,
       };
     }
@@ -128,7 +129,7 @@ const deleteOneWorkout = (workoutId) => {
     );
     if (indexForDeletion === -1) {
       throw {
-        status: 400,
+        status: 404,
         message: `Can't find workout with the id '${workoutId}'`,
       };
     }

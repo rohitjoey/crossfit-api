@@ -1,0 +1,246 @@
+openapi: "3.0.2"
+info:
+  title: Workout API
+  version: "1.0"
+servers:
+  - url: http://localhost:5000
+
+components:
+  schemas:
+    Workout:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 50
+        name:
+          type: string
+          example: Hari lal
+        mode:
+          type: string
+          example: For time
+        equipment:
+          type: array
+          items:
+            type: string
+          example: ["barbell", "rope"]
+        exercises:
+          type: array
+          items:
+            type: string
+          example:
+            [
+              "21 thrusters",
+              "12 rope climbs, 15 ft",
+              "15 thrusters",
+              "9 rope climbs, 15 ft",
+              "9 thrusters",
+              "6 rope climbs, 15 ft",
+            ]
+        createdAt:
+          type: string
+          example: 4/20/2022, 2:21:56 PM
+        updatedAt:
+          type: string
+          example: 4/20/2022, 2:21:56 PM
+        trainerTips:
+          type: array
+          items:
+            type: string
+          example:
+            [
+              "Split the 21 thrusters as needed",
+              "Try to do the 9 and 6 thrusters unbroken",
+              "RX Weights: 115lb/75lb",
+            ]
+
+  parameters:
+    idParam:
+      in: path
+      name: workoutId
+      schema:
+        type: string
+      required: true
+      description: The workout id
+
+  responses:
+    404NotFound:
+      description: No workout with given id
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: Failed
+              data:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Can't find workout with the id '52'"
+
+    5XXError:
+      description: FAILED
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: FAILED
+              data:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Some error message"
+
+paths:
+  /api/v1/workouts:
+    get:
+      summary: Returns list of workouts
+      tags: [Workout]
+      responses:
+        200:
+          description: The list of workouts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: OK
+                  data:
+                    type: array
+                    $ref: "#/components/schemas/Workout"
+        5XX:
+          $ref: "#/components/responses/5XXError"
+
+    post:
+      summary: Create a workout
+      tags: [Workout]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Workout"
+      responses:
+        201:
+          description: Create a workout
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: OK
+                  data:
+                    type: object
+                    $ref: "#/components/schemas/Workout"
+
+        400:
+          description: Workout already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: FAILED
+                  data:
+                    properties:
+                      error:
+                        type: string
+                        example: Workout with name 'Core buster' already exists
+
+        5XX:
+          $ref: "#/components/responses/5XXError"
+
+  /api/v1/workouts/{workoutId}:
+    get:
+      summary: Get workout by id
+      tags: [Workout]
+      parameters:
+        - $ref: "#components/parameters/idParam"
+      responses:
+        200:
+          description: The workout by id
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: OK
+                  data:
+                    type: object
+                    $ref: "#/components/schemas/Workout"
+
+        404:
+          $ref: "#/components/responses/404NotFound"
+
+        5XX:
+          $ref: "#components/responses/5XXError"
+
+    patch:
+      summary: Update workout by id
+      tags: [Workout]
+      parameters:
+        - $ref: "#components/parameters/idParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Workout"
+      responses:
+        200:
+          description: Update Workout
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: OK
+                  data:
+                    type: object
+                    $ref: "#/components/schemas/Workout"
+
+        404:
+          $ref: "#/components/responses/404NotFound"
+
+        5XX:
+          $ref: "#/components/responses/5XXError"
+
+    delete:
+      summary: Delete workout by id
+      tags: [Workout]
+      parameters:
+        - $ref: "#components/parameters/idParam"
+      responses:
+        200:
+          description: Delete workout by id
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: OK
+
+        404:
+          $ref: "#/components/responses/404NotFound"
+
+        5XX:
+          $ref: "#/components/responses/5XXError"

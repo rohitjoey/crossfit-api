@@ -102,7 +102,7 @@ const deleteOneWorkout = (req, res) => {
   }
   try {
     workoutService.deleteOneWorkout(workoutId);
-    res.status(204).send({ status: "OK" });
+    res.send({ status: "OK" });
   } catch (error) {
     res
       .status(error?.status || 500)
